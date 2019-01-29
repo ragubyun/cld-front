@@ -8,8 +8,8 @@
       </span>
     </div>
     <div>
-      <v-btn @click="firestoreTest">
-        firestore test
+      <v-btn @click="saveTokenTest">
+        save token test
       </v-btn>
     </div>
   </div>
@@ -33,7 +33,6 @@
           try {
             await this.$messaging.requestPermission();
             console.log('Notification permission granted.');
-
             this.saveToken(await this.$messaging.getToken());
           } catch (e) {
             console.log('Unable to get permission to notify.', e);
@@ -49,8 +48,8 @@
           }
         });
       },
-      firestoreTest() {
-        this.saveToken({ os: 'and', token: 'this is token' });
+      saveTokenTest() {
+        this.saveToken({ token: this.token });
       },
     },
     mounted() {

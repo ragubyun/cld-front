@@ -2,6 +2,7 @@
 
 import Vue from 'vue';
 import Vuex from 'vuex';
+import axios from 'axios';
 
 Vue.use(Vuex);
 
@@ -15,7 +16,7 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    async saveToken({ commit }, { os, token }) {
+    async saveToken({ commit }, token) {
       console.log('token: ', token);
       if (!token) {
         console.log('fail to get token');
@@ -24,26 +25,10 @@ export default new Vuex.Store({
 
       commit('setToken', token);
 
-      let newTokens;
-      const { exists, _document: { data: { tokens } = {} } = {} } = await Vue.firestore.collection('cld').doc(os).get();
-
-      if (exists && tokens) {
-        newTokens = tokens.push(token);
-      } else {
-        newTokens = [token];
-      }
-
-      Vue.firestore.collection('cld')
-        .doc(os)
-        .set({
-          newTokens,
-        })
-        .then(() => {
-          console.log('[firestore] Token successfully written!');
-        })
-        .catch((error) => {
-          console.error('[firestore] Error writing token: ', error);
-        });
+      axios.post('http://localhost:3000/api/v1/token', {
+        userAgent: navigator.userAgent,
+        token,
+      });
     },
   },
 });
