@@ -1,33 +1,40 @@
 <template>
   <div class="home">
-    <img alt="cld main" title="cld main" src="../assets/cld-main.png">
-    <img alt="cld schedule" title="cld schedule" src="../assets/cld-schedule.png">
-    <div>
-      <span class="push-message">
-        pushMessage: {{ pushMessage }}
-      </span>
+    <div class="main-page" v-if="beforeDraw">
+      <img alt="cld main" title="cld main" src="../assets/cld-main.png">
+      <img alt="cld schedule" title="cld schedule" src="../assets/cld-schedule.png">
+      <img alt="cld place" title="cld place" src="../assets/cld-place.png">
     </div>
-    <div>
-      <v-btn @click="saveTokenTest">
-        save token test
-      </v-btn>
-    </div>
+    <win-result :result="winResult" v-else></win-result>
   </div>
 </template>
 
 <script>
   import { mapActions, mapState } from 'vuex';
 
+  import WinResult from './WinResult.vue';
+
   export default {
     name: 'home',
+    components: {
+      WinResult,
+    },
     data() {
       return {
-        pushMessage: '',
+        winResult: '',
       };
     },
-    computed: mapState(['token']),
+    computed: {
+      ...mapState([
+        'token',
+        'beforeDraw',
+      ]),
+    },
     methods: {
-      ...mapActions(['saveToken']),
+      ...mapActions([
+        'saveToken',
+        'showSnackBar',
+      ]),
       async getPushPermission() {
         if (Notification.permission !== 'granted') {
           try {
@@ -41,15 +48,14 @@
       },
       addPushMessageHandler() {
         this.$messaging.onMessage((payload) => {
-          console.log('payload: ', payload);
+          this.showSnackBar({
+            message: '커피 당첨 결과가 도착하였습니다.',
+          });
           if (payload) {
-            const { data: { message } } = payload;
-            this.pushMessage = message;
+            const { data: { winResult } } = payload;
+            this.winResult = winResult;
           }
         });
-      },
-      saveTokenTest() {
-        this.saveToken({ token: this.token });
       },
     },
     mounted() {
