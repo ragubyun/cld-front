@@ -43,16 +43,14 @@
     },
     methods: {
       startDraw() {
-        setTimeout(() => {
-          axios.get(`${address}/lottery`)
-            .then((response) => {
-              console.log(response);
-              this.winners = response.data;
-            })
-            .catch((error) => {
-              console.log(`[추첨 실패...] ${error}`);
-            });
-        }, 1500);
+        axios.get(`${address}/lottery`)
+          .then((response) => {
+            console.log(response);
+            this.winners = response.data;
+          })
+          .catch((error) => {
+            console.log(`[추첨 실패...] ${error}`);
+          });
       },
     },
   };
